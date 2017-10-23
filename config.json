@@ -1,0 +1,10 @@
+{
+  "NUMBER_OF_PARTICIPANTS": 3,
+  "DATA_FILE_NAME": "data/tweets_list.txt",
+  "RULES" : [
+    "Omit tweets that are not in english, or if you are not able to understand it",
+    "rule 2",
+    "rule 3",
+    "rule 4"
+  ]
+}
