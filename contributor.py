@@ -114,6 +114,7 @@ class TweetCorrection():
                 f.write(', '.join(corrected_changed_tweet_sentiment_tuple)+'\n')
 
         shutil.make_archive(self.output_dir, 'zip', self.output_dir)
+        print('\nThank you for your contribution. Your work is saved into '+self.output_dir+'.zip')
 
     def run(self):
         self.prompt_usn_input()
