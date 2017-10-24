@@ -1,15 +1,9 @@
-import json, shutil, os
+import json, shutil, os, sys
 
 class TweetCorrection():
     def __init__(self):
         self.config = json.loads(open('config.json').read())
         self.tweets = open(self.config['DATA_FILE_NAME']).read().split('\n')
-
-        self.omitted_tweets = []
-        self.sentiments = []
-        self.unchanged_tweets = []
-        self.corrected_original_tweets = []
-        self.corrected_changed_tweets = []
 
     def display_rules(self):
         print('\nPLEASE READ THE BELOW RULES CAREFULLY AND APPLY AS NEEDED:')
@@ -33,6 +27,14 @@ class TweetCorrection():
         except:
             self.prompt_split_input()
 
+    def prompt_start_from_input(self):
+        print('Tweet index exceeded your split bounds, ')
+        try:
+            self.split_start_index = int(raw_input('Please enter correct index to start from: '))
+            assert(self.split_start_index < self.split_end_index)
+        except:
+            self.prompt_start_from_input()
+
     def prompt_tweet(self, tweet, count):
         print('\n\nTweet ' + str(count) + ': \"' + tweet + '\"')
         print
@@ -55,17 +57,14 @@ class TweetCorrection():
 
     def prompt_correction_input(self):
         correction = raw_input('Please enter the complete corrected tweet : ')
-        edit_correction = raw_input('Do you want to edit the correction? (no) : ')
-        if (edit_correction in ['','no']):
-            return correction
-        else:
-            return self.prompt_correction_input()
+        return correction
 
     def prompt_before_save(self):
         save = raw_input('\nDo you want to save? (yes) : ')
         return True if (save in ['','yes']) else False
 
     def process_tweet(self, tweet, count):
+        packet = {}
         self.prompt_tweet(tweet, count)
 
         omitted = self.prompt_tweet_omission()
@@ -82,57 +81,73 @@ class TweetCorrection():
             if not self.prompt_before_save():
                 self.process_tweet(tweet, count)
             else:
-                self.sentiments.append(sentiment)
                 if correction_needed:
-                    self.corrected_changed_tweets.append((correction, sentiment))
-                    self.corrected_original_tweets.append((tweet, sentiment))
+                    packet['corrected_original_tweet_sentiment_tuple'] = (tweet, sentiment)
+                    packet['corrected_changed_tweet_sentiment_tuple'] = (correction, sentiment)
+                    self.save_output(packet)
                 else:
-                    self.unchanged_tweets.append((tweet, sentiment))
+                    packet['unchanged_tweet_sentiment_tuple'] = (tweet, sentiment)
+                    self.save_output(packet)
         else:
             if not self.prompt_before_save():
                 self.process_tweet(tweet, count)
             else:
-                self.omitted_tweets.append(tweet)
+                packet['omitted_tweet'] = tweet
+                self.save_output(packet)
 
-    def save_output(self):
+    def create_output_dir(self):
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
+        for file in ['omitted_tweets.txt', 'unchanged_tweets.txt', 'corrected_original.txt', 'corrected_changed.txt']:
+            open(os.path.join(self.output_dir, file), 'w').close()
 
-        with open(self.output_dir+'/omitted_tweets.txt','w') as f:
-            for omitted_tweet in self.omitted_tweets:
-                f.write(omitted_tweet+'\n')
+    def save_output(self, packet):
+        if 'omitted_tweet' in packet:
+            with open(self.output_dir+'/omitted_tweets.txt','a') as f:
+                f.write(packet['omitted_tweet']+'\n')
+        else:
+            if 'unchanged_tweet_sentiment_tuple' in packet:
+                with open(self.output_dir+'/unchanged_tweets.txt','a') as f:
+                    f.write(', '.join(packet['unchanged_tweet_sentiment_tuple'])+'\n')
+            else:
+                with open(self.output_dir+'/corrected_original.txt','w') as f:
+                    f.write(', '.join(packet['corrected_original_tweet_sentiment_tuple'])+'\n')
 
-        with open(self.output_dir+'/unchanged_tweets.txt','w') as f:
-            for unchanged_tweet_sentiment_tuple in self.unchanged_tweets:
-                f.write(', '.join(unchanged_tweet_sentiment_tuple)+'\n')
+                with open(self.output_dir+'/corrected_changed.txt','w') as f:
+                    f.write(', '.join(packet['corrected_changed_tweet_sentiment_tuple'])+'\n')
 
-        with open(self.output_dir+'/corrected_original.txt','w') as f:
-            for corrected_original_tweet_sentiment_tuple in self.corrected_original_tweets:
-                f.write(', '.join(corrected_original_tweet_sentiment_tuple)+'\n')
-
-        with open(self.output_dir+'/corrected_changed.txt','w') as f:
-            for corrected_changed_tweet_sentiment_tuple in self.corrected_changed_tweets:
-                f.write(', '.join(corrected_changed_tweet_sentiment_tuple)+'\n')
-
+    def zip_output(self):
         shutil.make_archive(self.output_dir, 'zip', self.output_dir)
         print('\nThank you for your contribution. Your work is saved into '+self.output_dir+'.zip')
 
-    def run(self):
+    def setup(self):
         self.prompt_usn_input()
         self.prompt_split_input()
         self.display_rules()
 
         self.split_size = len(self.tweets) / int(self.config['NUMBER_OF_PARTICIPANTS'])
-        self.split_start_index = (self.split_index-1) * self.split_size
-        self.split_end_index = len(self.tweets) if(self.split_size == self.split_index) else (self.split_index) * self.split_size
+        self.split_end_index = len(self.tweets) if (self.split_size == self.split_index) \
+            else (self.split_index) * self.split_size
 
-        count = 1
+    def run(self):
+        self.setup()
+
+        if len(sys.argv)==3 and sys.argv[1] == '--start-from':
+            try:
+                self.split_start_index = int(sys.argv[2])
+                assert self.split_start_index < self.split_end_index
+            except Exception:
+                self.prompt_start_from_input()
+        else:
+            self.create_output_dir()
+            self.split_start_index = (self.split_index-1) * self.split_size
+
         for tweet_index in range(self.split_start_index, self.split_end_index):
             tweet = self.tweets[tweet_index]
-            self.process_tweet(tweet, count)
-            count += 1
+            self.process_tweet(tweet, tweet_index)
+        else:
+                self.zip_output()
 
-        self.save_output()
 
 app = TweetCorrection()
 app.run()
