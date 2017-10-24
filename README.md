@@ -1,4 +1,4 @@
-# TweetCorrection
+# TweetCorrectionTool
 
 Python2.7 command-line tool to crowdsource Tweet correction sentiment tagging.
 
