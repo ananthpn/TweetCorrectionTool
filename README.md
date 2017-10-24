@@ -1,8 +1,8 @@
 # TweetCorrection
 
-Python2.7 command-line tool to crowdsource Tweet correction and tweet sentiment tagging
+Python2.7 command-line tool to crowdsource Tweet correction sentiment tagging.
 
-Contributors must run ./contributor.py and follow the instructions.
+Contributors(students) must run ./contributor.py and follow the instructions.
 
 To resume from tweet index 'tweet_index' use-
 ```shell
