@@ -14,16 +14,16 @@ class TweetCorrection():
 
     def display_help_text(self):
         print '''
-        _____                _    ___                    _   _          
-       |_   _|_ __ _____ ___| |_ / __|___ _ _ _ _ ___ __| |_(_)___ _ _  
-         | | \ V  V / -_) -_)  _| (__/ _ \ '_| '_/ -_) _|  _| / _ \ ' \ 
-         |_|  \_/\_/\___\___|\__|\___\___/_| |_| \___\__|\__|_\___/_||_|
+      _____                _    ___                    _   _        _____         _ 
+     |_   _|_ __ _____ ___| |_ / __|___ _ _ _ _ ___ __| |_(_)___ _ |_   _|__  ___| |
+       | | \ V  V / -_) -_)  _| (__/ _ \ '_| '_/ -_) _|  _| / _ \ ' \| |/ _ \/ _ \ |
+       |_|  \_/\_/\___\___|\__|\___\___/_| |_| \___\__|\__|_\___/_||_|_|\___/\___/_|
         '''
         print('usage: python contributor.py, to start tweet correction')
         print('       python contributor.py --start-from <tweet_index>, to start tweet correction from <tweet_index>\n\n')
 
     def display_rules(self):
-        print('\nPLEASE READ THE BELOW RULES CAREFULLY AND APPLY AS NEEDED:')
+        print('\nPLEASE READ THE BELOW RULES CAREFULLY AND APPLY AS NEEDED:\n')
         for rule in self.config['RULES']:
             print('* '+rule)
         print('\nStarting Tweet Correction...\n')
@@ -99,17 +99,17 @@ class TweetCorrection():
                 self.process_tweet(tweet, count)
             else:
                 if correction_needed:
-                    packet['corrected_original_tweet_sentiment_tuple'] = (tweet, sentiment, self.tweet_index)
-                    packet['corrected_changed_tweet_sentiment_tuple'] = (correction, sentiment, self.tweet_index)
+                    packet['corrected_original_tweet_sentiment_tuple'] = (tweet, sentiment, str(self.tweet_index))
+                    packet['corrected_changed_tweet_sentiment_tuple'] = (correction, sentiment, str(self.tweet_index))
                     self.save_output(packet)
                 else:
-                    packet['unchanged_tweet_sentiment_tuple'] = (tweet, sentiment, self.tweet_index)
+                    packet['unchanged_tweet_sentiment_tuple'] = (tweet, sentiment, str(self.tweet_index))
                     self.save_output(packet)
         else:
             if not self.prompt_before_save():
                 self.process_tweet(tweet, count)
             else:
-                packet['omitted_tweet'] = (tweet, self.tweet_index)
+                packet['omitted_tweet'] = (tweet, str(self.tweet_index))
                 self.save_output(packet)
 
     def create_output_dir(self):
