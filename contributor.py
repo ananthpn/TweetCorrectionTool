@@ -66,9 +66,9 @@ class TweetCorrection():
         try:
             sentiment = raw_input('\tPlease assign sentiment to tweet? (0 -negative, 1 -neutral, 2 -positive) : ')
             assert (sentiment in ['0', '1', '2'])
-            return sentiment
         except:
             self.prompt_sentiment_input()
+        return sentiment
 
     def prompt_if_correction_needed(self):
         correction = raw_input('\tDoes the tweet need correction? (yes) : ')
