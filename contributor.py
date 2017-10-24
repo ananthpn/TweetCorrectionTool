@@ -39,7 +39,7 @@ class TweetCorrection():
 
     def prompt_tweet_omission(self):
         omit = raw_input('Should the tweet be removed? (no) : ')
-        return False if (omit == '' or omit == 'no') else True
+        return False if (omit in ['','no']) else True
 
     def prompt_sentiment_input(self):
         try:
@@ -51,18 +51,19 @@ class TweetCorrection():
 
     def prompt_if_correction_needed(self):
         correction = raw_input('Does the tweet need correction? (yes) : ')
-        return True if (correction == '' or correction == 'yes') else False
+        return True if (correction in ['','yes']) else False
 
     def prompt_correction_input(self):
         correction = raw_input('Please enter the complete corrected tweet : ')
         edit_correction = raw_input('Do you want to edit the correction? (no) : ')
-        if (edit_correction != '' or edit_correction != 'no'):
+        if (edit_correction in ['','no']):
+            return correction
+        else:
             return self.prompt_correction_input()
-        return correction
 
     def prompt_before_save(self):
         save = raw_input('\nDo you want to save? (yes) : ')
-        return True if (save == '' or save == 'yes') else False
+        return True if (save in ['','yes']) else False
 
     def process_tweet(self, tweet, count):
         self.prompt_tweet(tweet, count)
