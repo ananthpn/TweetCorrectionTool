@@ -1,8 +1,12 @@
 # TweetCorrection
 
-Python2.7 program to crowdsource tweet correction and sentiment tagging
+Python2.7 command-line tool to crowdsource Tweet correction and tweet sentiment tagging
 
 Contributors must run ./contributor.py and follow the instructions.
 
-To resume from tweet index 'i' use-
-    ./contributor.py --start-from i
+To resume from tweet index 'tweet_index' use-
+```shell
+$ python ./contributor.py --start-from tweet_index
+```
+
+Please check the examples before you start. USN_output.zip is created once you complete.
