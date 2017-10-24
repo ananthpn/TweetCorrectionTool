@@ -2,9 +2,28 @@
   "NUMBER_OF_PARTICIPANTS": 3,
   "DATA_FILE_NAME": "data/tweets_list.txt",
   "RULES" : [
-    "Omit tweets that are not in english, or if you are not able to understand it",
-    "rule 2",
-    "rule 3",
-    "rule 4"
+    ["If a word can be found in the standard dictionary no edit required", "Service, happy, ..."],
+    ["Leave out special tokens (that start with xxx and with suffix yyy)", "xxxSNameyyy"],
+    ["Leave out digits", "60"],
+    ["Leave out proper nouns e.g SBI", "ZIP"],
+    ["Change abbreviations or spelling errors into a suitable word in the dictionary", "alredy => already, grt => great"],
+    ["Change multiple periods into one period", "... =>"],
+    [" Leave patterns like 1/n, n/n, 2/3 that denote the tweet number as it i", "1/n, n/n, 2/3"],
+    [" Change words that start with apostrophe like 'scamming into two tokens ' and scammin", "‘scamming - ‘ and scamming"],
+    ["Change single token like (details...pls) to (details, ., please)", "(details...pls) to (details, ., please )"],
+    ["Change two tokens like (ca, n't) in to (can, not)", "(ca, n't) in to (can, not)"],
+    ["Leave phone numbers like 444-405-315 as it is", "444-405-315"],
+    ["Ignore grammatical errors - we are bothered only about mapping the word tokens to words in the dictionar", ""],
+    ["If the input has any extra tokens you can delete them at the output: e.g. \"thanks much...``abc\" can be labelled as \"thanks much .\" (3 tokens)", ""],
+    ["If you find a period meant to delimit a sentence but if you  don’t find a space, you need to separate. e.g. \"i need your help.please tell me the procedure to apply for loan\" can be labelled as: \"i need your help. please tell me the procedure to apply for loan\"", "\"i need your help.please tell me theprocedure to apply for loan\" can be labelled as: \"i need your help. please tell me the procedure to apply for loan\""],
+    ["Change abbreviations like w.e.f to with effect from", "w.e.f to with effect from"],
+    ["Split title prefixes", "‘Ms.Jyotsna’ => ‘MS, Jyotsna’"],
+    ["Use a standard for date or time references", "‘1-Feb’ => ’01/02/2017’"],
+    ["Omit non-english tweets", "‘amount cut ho gaya tha’"],
+    ["Remove trailing tokens with re’^*’ in some tweets", ""],
+    ["If there are reference numbers, Mark them as 'ref' instead", "Ref,No,.,TW1310170970"],
+    ["Change abbreviations even if it doesn't have a dot.", " If someone has written DM or wef, still ensure to change it to Direct Message or with effe"],
+    [" Look out for artefacts of web scraping, and correct accordingly.", "Netbanking & BHIM has got changed to netbankingamp, BHIM - this needs to be corrected for."],
+    ["There might be cases where you need to split on tokens like + etc.", "mclr+17 should become mclr + 17"]
   ]
 }

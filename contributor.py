@@ -24,8 +24,10 @@ class TweetCorrection():
 
     def display_rules(self):
         print('\nPLEASE READ THE BELOW RULES CAREFULLY AND APPLY AS NEEDED:\n')
-        for rule in self.config['RULES']:
+        for rule, example in self.config['RULES']:
             print('* '+rule)
+            if len(example): print('\t e.g.: '+example)
+            print
         print('\nStarting Tweet Correction...\n')
 
     def prompt_usn_input(self):
